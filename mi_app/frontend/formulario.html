@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registrar Usuario</title>
+</head>
+<body>
+  <h1>Formulario de Registro</h1>
+  <form id="form">
+    <label>Nombre: <input type="text" id="nombre" required></label><br><br>
+    <label>Correo: <input type="email" id="correo" required></label><br><br>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <p id="respuesta" style="font-weight:bold;"></p>
+
+  <script>
+    document.getElementById("form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+
+      const respuesta = await fetch("http://localhost:5000/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nombre, correo })
+      });
+
+      const textoRespuesta = document.getElementById("respuesta");
+
+      if (respuesta.status === 409) {
+        const mensaje = await respuesta.text();
+        textoRespuesta.textContent = "⚠️ " + mensaje;
+        return;
+      }
+
+      if (respuesta.ok) {
+        const resultado = await respuesta.json();
+        textoRespuesta.textContent = "✅ Usuario registrado con ID: " + resultado.id;
+      } else {
+        const error = await respuesta.text();
+        textoRespuesta.textContent = "❌ Error al registrar usuario: " + error;
+      }
+    });
+  </script>
+</body>
+</html>

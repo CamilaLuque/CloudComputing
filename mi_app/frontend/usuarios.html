@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lista de Usuarios</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Usuarios Registrados</h1>
+  <table id="usuariosTable">
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>Correo</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function cargarUsuarios() {
+      try {
+        const response = await fetch("http://localhost:5000/usuarios");
+        const usuarios = await response.json();
+
+        const tbody = document.querySelector("#usuariosTable tbody");
+        usuarios.forEach(usuario => {
+          const fila = document.createElement("tr");
+          fila.innerHTML = `<td>${usuario.id}</td><td>${usuario.nombre}</td><td>${usuario.correo}</td>`;
+          tbody.appendChild(fila);
+        });
+      } catch (err) {
+        document.body.innerHTML += "<p style='color:red;'>❌ Error al cargar usuarios.</p>";
+        console.error(err);
+      }
+    }
+
+    cargarUsuarios();
+  </script>
+</body>
+</html>
